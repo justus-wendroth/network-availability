@@ -18,8 +18,6 @@ def getCurrentTime() -> str:
 
 
 def writeOutageToFile(startOfOutage: str, endOfOutage: str):
-    print("Writing")
-
     with open("outages.json", "r") as outageFile:
         outages = json.load(outageFile)
 

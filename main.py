@@ -1,26 +1,16 @@
-import urllib
+import urllib.request
 import time
 import json
 import os
 from datetime import datetime
 
 
-def connectedToInternet(url="http://google.com", timeout=5) -> bool:
+def connectedToInternet(url="https://google.com", timeout=5) -> bool:
     try:
         urllib.request.urlopen(url, timeout=timeout)
         return True
     except urllib.request.URLError:
         return False
-    
-    
-    # try:
-    #     # _ = requests.head(url, timeout=timeout)
-    #     print("trying")
-    #     urllib.request.urlopen(url, timeout=timeout)
-    #     return True
-    # except:
-    #     print(urllib.error)
-    #     return False
 
 
 def getCurrentTime() -> str:
@@ -28,14 +18,18 @@ def getCurrentTime() -> str:
 
 
 def writeOutageToFile(startOfOutage: str, endOfOutage: str):
-    with open("out/outages.json", "w") as outageFile:
+    print("Writing")
+
+    with open("outages.json", "r") as outageFile:
         outages = json.load(outageFile)
+
+    with open("outages.json", "w") as outageFile:
         outages.append({"START": startOfOutage, "END": endOfOutage})
         json.dump(outages, outageFile, indent=4)
 
 
 def createOutageFile():
-    with open("out/outages.json", "w+") as outageFile:
+    with open("outages.json", "w+") as outageFile:
         json.dump([], outageFile, indent=4)
 
 
@@ -47,9 +41,8 @@ def testConnectionContiously():
         startOfOutage = getCurrentTime()
 
     while True:
-        time.sleep(3)
+        time.sleep(10)
         connected = connectedToInternet()
-        print(connected)
 
         if not connected and previouslyConnected:
             previouslyConnected = False
@@ -62,7 +55,7 @@ def testConnectionContiously():
             print("Outage ended: " + startOfOutage + " until " + endOfOutage)
 
 
-if not os.path.exists("out/outages.json"):
+if not os.path.exists("outages.json"):
     createOutageFile()
 
 testConnectionContiously()
